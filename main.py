@@ -2,15 +2,22 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
+from lxml import etree
+from colorama import init, Fore
 
 BASE_URL = "https://apps.irs.gov/app/picklist/list/priorFormPublication.html"
 BASE_SORT_QUERY = "?sortColumn=currentYearRevDate&indexOfFirstRow=0&criteria=formNumber&resultsPerPage=25"
 
 def main():
-    print(get_forms_info(["Form 11-C", "Form W-2 P"]))
+    init(autoreset=True)
+
+    # print(get_forms_info(["Form 11-C", "Form W-2 P"]))
+    find_pdf("Form 707", 1935)
+    # download_files("Form 707", 1935, 1937)
 
 def is_input_acceptable(input: str):
-    return True # Regex needed
+    return False # Regex needed
+    #@, /, &, (, ), *, hyphens, spaces, periods, and commas
 
 # returns an array of dictionaries contianing info for each product provided
 def get_forms_info(forms_list: list[str]):
@@ -56,7 +63,36 @@ def get_form_info(form_name: str):
     }
 
 def download_files(form_name: str, begin_year: int, end_year: int):
-    print("Not Implemented Yet")
+    if (not is_input_acceptable(form_name)):
+        return
+
+    for y in range(begin_year, end_year + 1):
+        find_pdf(form_name, y)
+
+def find_pdf(form_name: str, year: int):
+    if (not is_input_acceptable(form_name)):
+        print(Fore.RED + "Input '" + form_name + "' contains invalid characters")
+        return
+    # show 200 results per page
+    # check if next page contains a link
+    # make sure list is in ascending order
+    reformated_form_name = form_name.replace(" ", "+")
+    desc_query = BASE_URL + BASE_SORT_QUERY + "&isDescending=true&value=" + reformated_form_name
+    
+    # Parse descending results
+    page = requests.get(desc_query)
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    dom = etree.HTML(str(soup))
+
+    pdf_list = dom.xpath(f"//tr[td/a[text() = '{form_name}']  and td[@class='EndCellSpacer' and contains(text(),'{year}')]]/td/a/@href")
+
+    # if pdf_list:
+    #     return pdf_list[0]
+    # return None
+    pdf_link = pdf_list[0]
+    print(pdf_list)
+    download_pdf(form_name, year, pdf_link)
 
 # Downloads a file 
 def download_pdf(form_name: str, year: int, url: str):   
@@ -72,7 +108,7 @@ def download_pdf(form_name: str, year: int, url: str):
     with open(file_path, 'wb') as f:
         f.write(response.content)
     
-    print("Succefully Downloaded '" + file_name + "'")
+    print(Fore.GREEN + "Succefully Downloaded '" + file_name + "'")
 
 if __name__ == "__main__":
     main()
