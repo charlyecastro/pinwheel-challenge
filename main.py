@@ -16,7 +16,7 @@ ASC_QUERY = FORM_PUBLICAITON_URL + BASE_SORT_QUERY + "&isDescending=false"
 def main():
     init(autoreset=True)
     # download_files("Form W-2", 1966, 1971)
-    get_forms_info(["Form W-2G", "Form 720", "W-2"])
+    get_forms_info(["Form W-2G", "Form 720", "BLANK"])
 
 #  #@, /, &, (, ), *, hyphens, spaces, periods, and commas
 def is_search_acceptable(input: str):
@@ -46,32 +46,24 @@ def get_form_info(form_name: str):
         return
 
     form_name_query = reformat_search(form_name)
-    # Parse descending results
-    desc_page = requests.get(DESC_QUERY + form_name_query)
-    desc_soup = BeautifulSoup(desc_page.text, 'html.parser')
 
-    # Grab the first desc row that exactly matches the given form_name
-    # match = desc_soup.find("a", text=form_name)
-    match = desc_soup.find("a", text=form_name)
+    row_xpath = (f"//tr[td/a[text() = '{form_name}']][1]")
 
-    print(match)
-    if (not match):
+    matching_desc_row, _ = find_in_pages(row_xpath, DESC_QUERY + form_name_query)
+    
+    matching_asc_row, _ = find_in_pages(row_xpath, ASC_QUERY + form_name_query) 
+
+    if (matching_desc_row is None or matching_asc_row is None):
         print(Fore.YELLOW + "Could not find information for '" + form_name + "' \n")
         return None
 
-    matching_desc_row  = match.parent.parent
-    # Parse ascending results
-    asc_page = requests.get(ASC_QUERY + form_name_query)
-    asc_soup = BeautifulSoup(asc_page.text, 'html.parser')
+    desc_cols = matching_desc_row.getchildren()
+    asc_cols = matching_asc_row.getchildren()
 
-    # Grab the first asc row that exactly matches the given form_name
-    matching_asc_row = asc_soup.find("a", text=form_name).parent.parent
-    
-    # Grab data from ascending row and descending row
-    form_number = matching_desc_row.find("td", class_="LeftCellSpacer").getText().strip()
-    form_title = matching_desc_row.find("td", class_="MiddleCellSpacer").getText().strip()
-    max_year = matching_desc_row.find("td", class_="EndCellSpacer").getText().strip()
-    min_year = matching_asc_row.find("td", class_="EndCellSpacer").getText().strip()
+    form_number = desc_cols[0].getchildren()[0].text.strip()
+    form_title = desc_cols[1].text.strip()
+    max_year = desc_cols[2].text.strip()
+    min_year = asc_cols[2].text.strip()
 
     return {
         "form_number" : form_number, 
@@ -91,7 +83,7 @@ def download_files(form_name: str, begin_year: int, end_year: int):
         # case insensitive xpath https://stackoverflow.com/questions/2893551/case-insensitive-matching-in-xpath
         xpath = f"//tr[td/a[text() = '{form_name}']  and td[@class='EndCellSpacer' and contains(text(),'{y}')]]/td/a/@href"
         pdf_link, url = find_in_pages(xpath, query)
-        if (pdf_link):
+        if (pdf_link is None):
             download_pdf(form_name, y, pdf_link)
             query = url
         else:
@@ -104,10 +96,10 @@ def find_in_pages(xpath: str, url: str):
         soup = BeautifulSoup(page.content, 'html.parser')
         dom = etree.HTML(str(soup))
 
-        pdf_list = dom.xpath(xpath)
+        found_list = dom.xpath(xpath)
         # return pdf link and current url if found
-        if (pdf_list):
-            return pdf_list[0], url
+        if (found_list):
+            return found_list[0], url
         
         next_link_list = dom.xpath("//a[text() = 'Next »']/@href")
         # update url to next link and look for pdf link again
