@@ -1,7 +1,11 @@
 # pinwheel-challenge
 ## TODO
 - Finish Up Readme
-- Decide on Case Sensitivity: IDK
-- Decide on Page Navigation for JSON Func: No
-- Decide on Typer: Yes
-- 
+
+```
+python3 main.py download-files 'Form W-2G' 1990 1995
+```
+
+```
+python3 main.py get-forms-info '["Form W-2G"]'
+```

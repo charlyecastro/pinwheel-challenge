@@ -20,31 +20,19 @@ def main():
     init(autoreset=True)
     app()
 
-#  #@, /, &, (, ), *, hyphens, spaces, periods, and commas
-def is_search_acceptable(input: str):
-    match = re.match(r"^[a-zA-Z0-9-@.\/@,()*&\s]*$", input)
-    if (match):
-        return True
-    else:
-        print(Fore.RED + "'" + input + "' contains invalid characters. \n")
-        return False
-
-def reformat_search(input: str):
-    return "&value=" + input.replace(" ", "+")
-
-
 # returns an array of dictionaries contianing info for each product provided
 @app.command()
-def get_forms_info(forms_list: list[str]):
+def get_forms(forms: str):
+    forms_list = json.loads(forms)
     result = []
     for form in forms_list:
-        info = get_form_info(form)
+        info = get_form(form)
         if (info):
             result.append(info)
     print("JSON Object for " + str(forms_list) + "\n")
     print(Fore.CYAN + json.dumps(result, indent=2) + " \n")
     
-def get_form_info(form_name: str):
+def get_form(form_name: str):
     if (not is_search_acceptable(form_name)):
         return
 
@@ -75,7 +63,7 @@ def get_form_info(form_name: str):
     }
 
 @app.command()
-def download_files(form_name: str, begin_year: int, end_year: int):
+def download_forms(form_name: str, begin_year: int, end_year: int):
     if (not is_search_acceptable(form_name)):
         return
     
@@ -83,14 +71,42 @@ def download_files(form_name: str, begin_year: int, end_year: int):
 
     print(f"looking for '{form_name}' PDF files through years {begin_year} - {end_year}")
     for y in range(begin_year, end_year + 1):
-        # case insensitive xpath https://stackoverflow.com/questions/2893551/case-insensitive-matching-in-xpath
         xpath = f"//tr[td/a[text() = '{form_name}']  and td[@class='EndCellSpacer' and contains(text(),'{y}')]]/td/a/@href"
         pdf_link, url = find_in_pages(xpath, query)
         if (pdf_link is None):
             print(Fore.YELLOW + "Could not find '" + form_name + "' for the year " + str(y) + "\n")
         else:
-            download_pdf(form_name, y, pdf_link)
+            download_form(form_name, y, pdf_link)
             query = url
+
+# Downloads a file from the given url and names it with the given name and year
+def download_form(form_name: str, year: int, url: str):   
+    folder = "./" + form_name
+    file_name = form_name + " - " + str(year) + ".pdf"
+
+    if not os.path.exists(folder):
+        print(Fore.CYAN +"Creating new folder '" + folder + "' \n")
+        os.mkdir(folder)
+
+    response = requests.get(url)
+    file_path = os.path.join(folder,file_name)
+
+    with open(file_path, 'wb') as f:
+        f.write(response.content)
+    
+    print(Fore.GREEN + "Succefully Downloaded '" + file_name + "' \n")
+
+def reformat_search(input: str):
+    return "&value=" + input.replace(" ", "+")
+
+#  #@, /, &, (, ), *, hyphens, spaces, periods, and commas
+def is_search_acceptable(input: str):
+    match = re.match(r"^[a-zA-Z0-9-@.\/@,()*&\s]*$", input)
+    if (match):
+        return True
+    else:
+        print(Fore.RED + "'" + input + "' contains invalid characters. \n")
+        return False
 
 # Looks for pdf in each page. If pdf found returns pdf link and the url found in. 
 def find_in_pages(xpath: str, url: str): 
@@ -111,23 +127,6 @@ def find_in_pages(xpath: str, url: str):
         # return none if no more next links
         else:
             return None, None
-
-# Downloads a file from the given url and names it with the given name and year
-def download_pdf(form_name: str, year: int, url: str):   
-    folder = "./" + form_name
-    file_name = form_name + " - " + str(year) + ".pdf"
-
-    if not os.path.exists(folder):
-        print(Fore.CYAN +"Creating new folder '" + folder + "' \n")
-        os.mkdir(folder)
-
-    response = requests.get(url)
-    file_path = os.path.join(folder,file_name)
-
-    with open(file_path, 'wb') as f:
-        f.write(response.content)
-    
-    print(Fore.GREEN + "Succefully Downloaded '" + file_name + "' \n")
 
 if __name__ == "__main__":
     main()
