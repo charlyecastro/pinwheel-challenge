@@ -5,6 +5,9 @@ import requests
 from bs4 import BeautifulSoup
 from lxml import etree
 from colorama import init, Fore
+import typer
+app = typer.Typer()
+
 
 BASE_URL = "https://apps.irs.gov"
 FORM_PUBLICAITON_URL = BASE_URL + "/app/picklist/list/priorFormPublication.html"
@@ -15,8 +18,7 @@ ASC_QUERY = FORM_PUBLICAITON_URL + BASE_SORT_QUERY + "&isDescending=false"
 
 def main():
     init(autoreset=True)
-    # download_files("Form W-2", 1966, 1971)
-    get_forms_info(["Form W-2G", "Form 720", "BLANK"])
+    app()
 
 #  #@, /, &, (, ), *, hyphens, spaces, periods, and commas
 def is_search_acceptable(input: str):
@@ -32,6 +34,7 @@ def reformat_search(input: str):
 
 
 # returns an array of dictionaries contianing info for each product provided
+@app.command()
 def get_forms_info(forms_list: list[str]):
     result = []
     for form in forms_list:
@@ -50,7 +53,6 @@ def get_form_info(form_name: str):
     row_xpath = (f"//tr[td/a[text() = '{form_name}']][1]")
 
     matching_desc_row, _ = find_in_pages(row_xpath, DESC_QUERY + form_name_query)
-    
     matching_asc_row, _ = find_in_pages(row_xpath, ASC_QUERY + form_name_query) 
 
     if (matching_desc_row is None or matching_asc_row is None):
@@ -72,6 +74,7 @@ def get_form_info(form_name: str):
         "max_year" : int(max_year) 
     }
 
+@app.command()
 def download_files(form_name: str, begin_year: int, end_year: int):
     if (not is_search_acceptable(form_name)):
         return
@@ -84,10 +87,10 @@ def download_files(form_name: str, begin_year: int, end_year: int):
         xpath = f"//tr[td/a[text() = '{form_name}']  and td[@class='EndCellSpacer' and contains(text(),'{y}')]]/td/a/@href"
         pdf_link, url = find_in_pages(xpath, query)
         if (pdf_link is None):
+            print(Fore.YELLOW + "Could not find '" + form_name + "' for the year " + str(y) + "\n")
+        else:
             download_pdf(form_name, y, pdf_link)
             query = url
-        else:
-            print(Fore.YELLOW + "Could not find'" + form_name + "' for the year " + str(y) + "\n")
 
 # Looks for pdf in each page. If pdf found returns pdf link and the url found in. 
 def find_in_pages(xpath: str, url: str): 
