@@ -94,7 +94,7 @@ def download_form(form_name: str, year: int, url: str):
     with open(file_path, 'wb') as f:
         f.write(response.content)
     
-    print(Fore.GREEN + "Succefully Downloaded '" + file_name + "' \n")
+    print(Fore.GREEN + "Successfully Downloaded '" + file_name + "' \n")
 
 def reformat_search(input: str):
     return "&value=" + input.replace(" ", "+")

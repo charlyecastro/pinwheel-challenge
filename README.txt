@@ -1,15 +1,15 @@
 OVERVIEW
 
 
-GET FORMS JSON
+GET FORMS
     Description:
-        This Command returns a json array of objects for each form in a given list.
+        This Command returns a json array of objects for each form in a given list of form names.
         Each object contains the form number, form title, min year available, and max year available.
 
-    Sucessful Command: 
-        python3 main.py get-forms-info '["Form W-2G", "Form 720"]'
+    Successful Command: 
+        python3 main.py get-forms '["Form W-2G", "Form 720"]'
 
-    Succesful Output:
+    Successful Output:
         JSON Object for ["Form W-2G", "Form 720"]
         [
         {
@@ -25,20 +25,11 @@ GET FORMS JSON
             "max_year": 2021
         }
         ] 
+    
+    Partially Successful Command:
+        python3 main.py get-forms '["Form W-2G", "blank"]'
 
-    Unsuccesful Command:
-        python3 main.py get-forms-info '["blank"]'
-
-    Unsuccesful Output: 
-        Could not find information for 'blank' 
-
-        JSON Object for ['blank']
-        []
-
-    Partially Succesful Command:
-        python3 main.py get-forms-info '["Form W-2G", "blank"]'
-
-    Partially Succesful Output:
+    Partially Successful Output:
         JSON Object for ["Form W-2G", "blank"]
         [
         {
@@ -49,9 +40,79 @@ GET FORMS JSON
         }
         ] 
 
-DOWNLOAD FILES
+    Unsuccessful Command:
+        python3 main.py get-forms '["blank"]'
 
-python3 main.py get-forms-info '["Form W-2G", "Form 720"]'
+    Unsuccessful Output: 
+        Could not find information for 'blank' 
+
+        JSON Object for ['blank']
+        []
+
+
+DOWNLOAD FORMS
+    Description:
+        This Command returns a json array of objects for each form in a given list of form names.
+        Each object contains the form number, form title, min year available, and max year available.
+
+    Sucessful Command:
+        python3 main.py download-forms 'Form W-2G' 1990 1995
+
+    Succesful Output:
+        looking for 'Form W-2G' PDF files through years 1990 - 1995
+        Creating new folder './Form W-2G' 
+
+        Successfully Downloaded 'Form W-2G - 1990.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1991.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1992.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1993.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1994.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1995.pdf'
+
+    Partially Successful Command:
+        python3 main.py download-forms 'Form W-2G' 1989 1995 
+
+    Partially Successful Output:
+        looking for 'Form W-2G' PDF files through years 1989 - 1995
+        Could not find 'Form W-2G' for the year 1989
+
+        Creating new folder './Form W-2G' 
+
+        Successfully Downloaded 'Form W-2G - 1990.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1991.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1992.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1993.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1994.pdf' 
+
+        Successfully Downloaded 'Form W-2G - 1995.pdf' 
+
+    Unsuccessful Command:
+        python3 main.py download-forms 'Form W-2G00' 1989 1995
+
+    Unsuccessful Output: 
+        looking for 'Form W-2G00' PDF files through years 1989 - 1995
+        Could not find 'Form W-2G00' for the year 1989
+
+        Could not find 'Form W-2G00' for the year 1990
+
+        Could not find 'Form W-2G00' for the year 1991
+
+        Could not find 'Form W-2G00' for the year 1992
+
+        Could not find 'Form W-2G00' for the year 1993
+
+        Could not find 'Form W-2G00' for the year 1994
+
+        Could not find 'Form W-2G00' for the year 1995
 
 
 GENERAL ERRORS
