@@ -1,7 +1,9 @@
 # pinwheel-challenge
 
 ## OVERVIEW
-
+- Python 3.8.5
+- Case Sensitive
+- Fetch from [IRS Prior Year Products](https://apps.irs.gov/app/picklist/list/priorFormPublication.html) Page
 
 ## Get Forms
 
@@ -13,41 +15,56 @@ Each object contains the form number, form title, min year available, and max ye
 **Successful Command:** 
 
 ```
-python3 main.py get-forms '["Form W-2G", "Form 720"]'
+python3 main.py get-forms "Form W-2G, Form 720"
 ```
 
 **Successful Output:**
 
 ```
-JSON Object for ["Form W-2G", "Form 720"]
+Getting Forms for 'Form W-2G, Form 720' 
+
+Looking for 'Form W-2G'...
+Found information for 'Form W-2G' 
+
+Looking for 'Form 720'...
+Found information for 'Form 720' 
+
+JSON Object: 
+
 [
-{
+  {
     "form_number": "Form W-2G",
     "form_title": "Certain Gambling Winnings",
     "min_year": 1990,
     "max_year": 2021
-},
-{
+  },
+  {
     "form_number": "Form 720",
     "form_title": "Quarterly Federal Excise Tax Return",
     "min_year": 1961,
     "max_year": 2021
-}
+  }
 ] 
 ```
 
 **Partially Successful Command:**
 
 ```
-python3 main.py get-forms '["Form W-2G", "blank"]'
+python3 main.py get-forms "Form W-2G, blank"
 ```
 
 **Partially Successful Output:**
 
 ```
+Getting Forms for 'Form W-2G, blank' 
+
+Looking for 'Form W-2G'...
+Found information for 'Form W-2G' 
+
+Looking for 'blank'...
 Could not find information for 'blank' 
 
-JSON Object for ['Form W-2G', 'blank']
+JSON Object: 
 
 [
   {
@@ -56,66 +73,72 @@ JSON Object for ['Form W-2G', 'blank']
     "min_year": 1990,
     "max_year": 2021
   }
-]
+] 
 ```
 
 **Unsuccessful Command:**
 
 ```    
-python3 main.py get-forms '["blank"]'
+python3 main.py get-forms "blank"
 ```
 
 **Unsuccessful Output:**
 
 ```
-    Could not find information for 'blank' 
+Getting Forms for 'blank' 
 
-    JSON Object for ['blank']
-    []
+Looking for 'blank'...
+Could not find information for 'blank' 
+
+JSON Object: 
+
+[] 
 ```
 
 ## Download Forms
 
 **Description:**
 
-    This Command returns a json array of objects for each form in a given list of form names.
-    Each object contains the form number, form title, min year available, and max year available.
+This Command returns a json array of objects for each form in a given list of form names.
+Each object contains the form number, form title, min year available, and max year available.
 
 **Sucessful Command:**
 
 ```
-python3 main.py download-forms 'Form W-2G' 1990 1995
+python3 main.py download-forms "Form W-2G" 1990 1995
 ```
 
 **Succesful Output:**
 
 ```
-    looking for 'Form W-2G' PDF files through years 1990 - 1995
-    Creating new folder './Form W-2G' 
+Looking for 'Form W-2G' PDF files through years 1990 - 1995
 
-    Successfully Downloaded 'Form W-2G - 1990.pdf' 
+Creating new folder './Form W-2G' 
 
-    Successfully Downloaded 'Form W-2G - 1991.pdf' 
+Successfully Downloaded 'Form W-2G - 1990.pdf' 
 
-    Successfully Downloaded 'Form W-2G - 1992.pdf' 
+Successfully Downloaded 'Form W-2G - 1991.pdf' 
 
-    Successfully Downloaded 'Form W-2G - 1993.pdf' 
+Successfully Downloaded 'Form W-2G - 1992.pdf' 
 
-    Successfully Downloaded 'Form W-2G - 1994.pdf' 
+Successfully Downloaded 'Form W-2G - 1993.pdf' 
 
-    Successfully Downloaded 'Form W-2G - 1995.pdf'
+Successfully Downloaded 'Form W-2G - 1994.pdf' 
+
+Successfully Downloaded 'Form W-2G - 1995.pdf' 
 ```
 
 **Partially Successful Command:**
 
 ```
-    python3 main.py download-forms 'Form W-2G' 1989 1995 
+python3 main.py download-forms "Form W-2G" 1989 1995 
 ```
 
 **Partially Successful Output:**
 
 ```
-looking for 'Form W-2G' PDF files through years 1989 - 1995
+Looking for 'Form W-2G' PDF files through years 1989 - 1995
+
 Could not find 'Form W-2G' for the year 1989
 
 Creating new folder './Form W-2G' 
@@ -136,12 +159,13 @@ Successfully Downloaded 'Form W-2G - 1995.pdf'
 **Unsuccessful Command:**
 
 ```
-python3 main.py download-forms 'Form W-2G00' 1989 1995
+python3 main.py download-forms "Form W-2G00" 1989 1995
 ```
 
 **Unsuccessful Output:**
 ```
-looking for 'Form W-2G00' PDF files through years 1989 - 1995
+Looking for 'Form W-2G00' PDF files through years 1989 - 1995
+
 Could not find 'Form W-2G00' for the year 1989
 
 Could not find 'Form W-2G00' for the year 1990
@@ -162,7 +186,7 @@ Could not find 'Form W-2G00' for the year 1995
 **No Special Characteres Allowed:**
 
 ```
-    "'Form W-2G_' contains invalid characters."
+'Form W-2G_' contains invalid characters.
 ```
 
 ## General Warnings
@@ -170,11 +194,11 @@ Could not find 'Form W-2G00' for the year 1995
 **Unable to find form:**
 
 ```
-    Could not find information for 'W-2'
+Could not find information for 'W-2'
 ```
 
 **Unable to find form for specific year:**
 
 ```
-    Could not find 'form W-2G' for the year 1980
+Could not find 'W-2' for the year 1980
 ```

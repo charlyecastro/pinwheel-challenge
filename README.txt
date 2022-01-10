@@ -7,10 +7,19 @@ GET FORMS
         Each object contains the form number, form title, min year available, and max year available.
 
     Successful Command: 
-        python3 main.py get-forms '["Form W-2G", "Form 720"]'
+        python3 main.py get-forms "Form W-2G, Form 720"
 
     Successful Output:
-        JSON Object for ["Form W-2G", "Form 720"]
+        Getting Forms for 'Form W-2G, Form 720' 
+
+        Looking for 'Form W-2G'...
+        Found information for 'Form W-2G' 
+
+        Looking for 'Form 720'...
+        Found information for 'Form 720' 
+
+        JSON Object: 
+
         [
         {
             "form_number": "Form W-2G",
@@ -27,10 +36,19 @@ GET FORMS
         ] 
     
     Partially Successful Command:
-        python3 main.py get-forms '["Form W-2G", "blank"]'
+        python3 main.py get-forms "Form W-2G, blank"
 
     Partially Successful Output:
-        JSON Object for ["Form W-2G", "blank"]
+        Getting Forms for 'Form W-2G, blank' 
+
+        Looking for 'Form W-2G'...
+        Found information for 'Form W-2G' 
+
+        Looking for 'blank'...
+        Could not find information for 'blank' 
+
+        JSON Object: 
+
         [
         {
             "form_number": "Form W-2G",
@@ -41,12 +59,16 @@ GET FORMS
         ] 
 
     Unsuccessful Command:
-        python3 main.py get-forms '["blank"]'
+        python3 main.py get-forms "blank"
 
     Unsuccessful Output: 
+        Getting Forms for 'blank' 
+
+        Looking for 'blank'...
         Could not find information for 'blank' 
 
-        JSON Object for ['blank']
+        JSON Object:
+
         []
 
 
@@ -56,10 +78,11 @@ DOWNLOAD FORMS
         Each object contains the form number, form title, min year available, and max year available.
 
     Sucessful Command:
-        python3 main.py download-forms 'Form W-2G' 1990 1995
+        python3 main.py download-forms "Form W-2G" 1990 1995
 
     Succesful Output:
-        looking for 'Form W-2G' PDF files through years 1990 - 1995
+        Looking for 'Form W-2G' PDF files through years 1990 - 1995
+
         Creating new folder './Form W-2G' 
 
         Successfully Downloaded 'Form W-2G - 1990.pdf' 
@@ -72,13 +95,14 @@ DOWNLOAD FORMS
 
         Successfully Downloaded 'Form W-2G - 1994.pdf' 
 
-        Successfully Downloaded 'Form W-2G - 1995.pdf'
+        Successfully Downloaded 'Form W-2G - 1995.pdf' 
 
     Partially Successful Command:
-        python3 main.py download-forms 'Form W-2G' 1989 1995 
+        python3 main.py download-forms "Form W-2G" 1989 1995  
 
     Partially Successful Output:
-        looking for 'Form W-2G' PDF files through years 1989 - 1995
+        Looking for 'Form W-2G' PDF files through years 1989 - 1995
+
         Could not find 'Form W-2G' for the year 1989
 
         Creating new folder './Form W-2G' 
@@ -96,10 +120,11 @@ DOWNLOAD FORMS
         Successfully Downloaded 'Form W-2G - 1995.pdf' 
 
     Unsuccessful Command:
-        python3 main.py download-forms 'Form W-2G00' 1989 1995
+        python3 main.py download-forms "Form W-2G00" 1989 1995
 
     Unsuccessful Output: 
-        looking for 'Form W-2G00' PDF files through years 1989 - 1995
+        Looking for 'Form W-2G00' PDF files through years 1989 - 1995
+
         Could not find 'Form W-2G00' for the year 1989
 
         Could not find 'Form W-2G00' for the year 1990
