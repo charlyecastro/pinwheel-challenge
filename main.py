@@ -8,7 +8,6 @@ from colorama import init, Fore
 import typer
 app = typer.Typer()
 
-
 BASE_URL = "https://apps.irs.gov"
 FORM_PUBLICAITON_URL = BASE_URL + "/app/picklist/list/priorFormPublication.html"
 BASE_SORT_QUERY = "?sortColumn=currentYearRevDate&indexOfFirstRow=0&criteria=formNumber&resultsPerPage=200"
@@ -33,7 +32,7 @@ def get_forms(forms: str):
     print("JSON Object: \n")
     print(Fore.CYAN + json.dumps(result, indent=2) + " \n")
 
-# Downloads forms
+# Downloads the given form_name pdf files for each year in the given year range
 @app.command()
 def download_forms(form_name: str, begin_year: int, end_year: int):
     if (not is_search_acceptable(form_name)):
