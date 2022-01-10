@@ -1,17 +1,28 @@
-# pinwheel-challenge: Find the Forms!
+# Pinwheel Challenge: Find the Forms!
 
 ## OVERVIEW
 
-- Python 3.8.5
-- Case Sensitive
-- Fetch from [IRS Prior Year Products](https://apps.irs.gov/app/picklist/list/priorFormPublication.html) Page
-- python3 -m pip install -r requirements.txt 
+### Context
+In America, taxes are often complex and require many different PDF forms and posted informational notices. The IRS keeps records of the current tax year's forms and historical forms going back many years online on their [Prior Year Products](https://apps.irs.gov/app/picklist/list/priorFormPublication.html) page.
+
+### Challenge
+For this challenge write two different utilities for searching IRS tax forms:
+
+- **Get Forms**: Taking a list of tax form names, search the website and return some
+informational results in json.
+- **Download Forms**: Taking a tax form name and a range of years, download all PDFs available within that range.
+
+### Requirements
+- Python Version 3.8.5 (Python 3.8.0 should be fine)
+- Make sure to run `python3 -m pip install -r requirements.txt`
+
+<br>
 
 ## Get Forms
 
 **Description:**
 
-This command takes in a string of forms which are seperated by commas for example `"Form W-2G, Form W-10, Form 720"`. This command prints a json array containing objects for each form in the given string. Each object contains the form number, form title, min year available, and max year available. Below are examples of this command.
+This command takes in a string of forms which are seperated by commas. For example `"Form W-2G, Form W-10, Form 720"`. This command prints a json array containing objects for each form in the given string. Each object contains the form number, form title, min year available, and max year available. Below are examples of this command.
 
 
 **Successful Command:** 
@@ -97,11 +108,13 @@ JSON Object:
 [] 
 ```
 
+<br>
+
 ## Download Forms
 
 **Description:**
 
-This command takes in a string form_name, an int begin_year and an int end_year for example `"Form W-2G" 1990 1995`. This command will find the files for the given form_name and download the pdf files for each year in the given year range. All files will be downloaded in a subdirectory inside this folder. A folder named after the given form_name will be created if it doesn't exist already. Below are examples of this command.
+This command takes in a string form_name, an int begin_year and an int end_year. For example `"Form W-2G" 1990 1995`. This command will find the files for the given form_name and download the pdf files for each year in the given year range(inclusive). All files will be downloaded in a subdirectory inside this folder. A folder named after the given form_name will be created if it doesn't exist already. Below are examples of this command.
 
 **Sucessful Command:**
 
@@ -182,6 +195,8 @@ Could not find 'Form W-2G00' for the year 1994
 Could not find 'Form W-2G00' for the year 1995
 ```
 
+<br>
+
 ## General Errors
 
 **No Special Characteres Allowed:**
@@ -189,6 +204,8 @@ Could not find 'Form W-2G00' for the year 1995
 ```
 'Form W-2G_' contains invalid characters.
 ```
+
+<br>
 
 ## General Warnings
 
